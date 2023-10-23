@@ -11,7 +11,7 @@ import java.io.IOException;
 public class IdDeserializer extends JsonDeserializer<Long> {
 
     @Override
-    public Long deserialize(JsonParser p, DeserializationContext ctxt) throws IOException , JacksonException {
+    public Long deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         JsonNode node = p.getCodec().readTree(p);
         long id = node.asLong();
         if (id == 0) {

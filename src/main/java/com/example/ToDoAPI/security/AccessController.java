@@ -1,20 +1,15 @@
 package com.example.ToDoAPI.security;
 
 
-import com.example.ToDoAPI.email.EmailDetails;
-import com.example.ToDoAPI.email.EmailRequestBody;
-import com.example.ToDoAPI.email.EmailService;
+import com.example.ToDoAPI.email.EmailRequest;
 import com.example.ToDoAPI.email.email_confirmation.ResendEmailConfirmationRequestBody;
-import com.example.ToDoAPI.exception.customException.EmailNotVerifiedException;
 import com.example.ToDoAPI.security.oauth.google.GoogleLoginRequest;
 import com.example.ToDoAPI.user.reset_password.ResetPasswordRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -82,7 +77,7 @@ public class AccessController {
 
 
     @PostMapping("/password/reset/request")
-    public ResponseEntity<?> resetPasswordRequest(@Valid @RequestBody EmailRequestBody email) {
+    public ResponseEntity<?> resetPasswordRequest(@Valid @RequestBody EmailRequest email) {
         return accessService.sendResetPasswordEmail(email.getEmail());
     }
 
