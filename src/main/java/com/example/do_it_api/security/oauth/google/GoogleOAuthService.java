@@ -46,7 +46,8 @@ public class GoogleOAuthService {
         HttpEntity<String> entity = new HttpEntity<>(headers);
         try {
 
-            ResponseEntity<UserInfoResponse> userInfo = restTemplate.exchange("https://www.googleapis.com/oauth2/v2/userinfo", HttpMethod.GET, entity, UserInfoResponse.class);
+            ResponseEntity<UserInfoResponse> userInfo = restTemplate.exchange(
+                    "https://www.googleapis.com/oauth2/v2/userinfo", HttpMethod.GET, entity, UserInfoResponse.class);
             return userInfo.getBody().getEmail();
 
         }

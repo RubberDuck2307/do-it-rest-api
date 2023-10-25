@@ -24,8 +24,6 @@ public class DefaultUserDetails implements UserDetails {
     private boolean oAuth;
     @Column (nullable = false)
     private boolean emailConfirmed = false;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private Set<EventList> eventLists;
 
 
     public DefaultUserDetails(String userEmail, String password) {

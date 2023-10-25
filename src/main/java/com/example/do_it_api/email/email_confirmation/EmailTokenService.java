@@ -41,16 +41,14 @@ public class EmailTokenService {
     }
 
     public boolean sendConfirmationEmail(EmailToken token) {
-        EmailDetails emailDetails = new EmailDetails(token.getUser().getUsername(), applicationURL + confirmEmailEndpoint + token.getToken(), "Confirm your email", null);
+        EmailDetails emailDetails = new EmailDetails(token.getUser().getUsername(),
+                applicationURL + confirmEmailEndpoint + token.getToken(), "Confirm your email", null);
         return emailService.sendSimpleMail(emailDetails);
     }
 
     @Transactional
     public DefaultUserDetails confirmEmail(String token) {
-        EmailToken emailToken = emailTokenRepo.findByToken(token).orElse(null);
-        if (emailToken == null) {
-            throw new WrongConfirmationToken();
-        }
+        EmailToken emailToken = emailTokenRepo.findByToken(token).orElseThrow(WrongConfirmationToken::new);
         if (emailToken.getExpirationDate().isBefore(java.time.LocalDateTime.now())) {
             emailTokenRepo.delete(emailToken);
             throw new ConfirmationTokenExpired();
@@ -61,10 +59,7 @@ public class EmailTokenService {
     }
 
     public boolean resendActivationToken(String token){
-        EmailToken emailToken = emailTokenRepo.findByToken(token).orElse(null);
-        if (emailToken == null) {
-           throw new WrongConfirmationToken();
-        }
+        EmailToken emailToken = emailTokenRepo.findByToken(token).orElseThrow(WrongConfirmationToken::new);
         DefaultUserDetails user = emailToken.getUser();
         emailTokenRepo.delete(emailToken);
         emailToken = createToken(user);

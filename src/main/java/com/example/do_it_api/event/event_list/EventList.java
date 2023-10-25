@@ -21,12 +21,10 @@ public class EventList implements PrivateEntity {
     private String name;
     @Column(nullable = false)
     private String color;
-
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
     private DefaultUserDetails user;
     @OneToMany(mappedBy = "list", cascade = CascadeType.REMOVE, orphanRemoval = true)
-
     private Set<Event> events;
 
     public void addEvent(Event event){

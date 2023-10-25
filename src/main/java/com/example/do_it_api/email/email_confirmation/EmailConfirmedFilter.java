@@ -22,8 +22,8 @@ public class EmailConfirmedFilter extends OncePerRequestFilter {
     private final EntityAccessHelper<?> entityAccessHelper;
 
     @Override
-    protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain) throws ServletException, IOException {
-
+    protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
+                                    @NotNull FilterChain filterChain) throws ServletException, IOException {
         DefaultUserDetails userDetails;
         try {
             userDetails = entityAccessHelper.getLoggedUser();
