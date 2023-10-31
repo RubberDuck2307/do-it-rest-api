@@ -14,12 +14,11 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "${app.url}", allowCredentials = "true")
-@RequestMapping("api/v1/event")
+@RequestMapping("${api.versioning}/event")
 @RequiredArgsConstructor
 public class EventController {
 
     private final EventService eventService;
-
 
     @GetMapping("/")
     public ResponseEntity<List<EventBriefGetDTO>> getAllEvents(){
@@ -59,24 +58,28 @@ public class EventController {
     }
 
     @GetMapping("/week/{day}/{month}/{year}")
-    public ResponseEntity<List<EventFullGetDTO>> getWeekEvents(@PathVariable int day, @PathVariable int month, @PathVariable int year){
+    public ResponseEntity<List<EventFullGetDTO>> getWeekEvents(@PathVariable int day, @PathVariable int month,
+                                                               @PathVariable int year){
         LocalDate date = LocalDate.of(year, month, day);
         return eventService.getWeekEventsFull(date);
     }
 
     @GetMapping("/{day}/{month}/{year}")
-    public ResponseEntity<List<EventFullGetDTO>> getDayEvents(@PathVariable int day, @PathVariable int month, @PathVariable int year){
+    public ResponseEntity<List<EventFullGetDTO>> getDayEvents(@PathVariable int day, @PathVariable int month,
+                                                              @PathVariable int year){
         LocalDate date = LocalDate.of(year, month, day);
         return eventService.getEventsByDayFull(date);
     }
     @GetMapping("/month/{month}/{year}")
-    public ResponseEntity<List<EventFullGetDTO>> getMonthEvents(@PathVariable int month, @PathVariable int year){
+    public ResponseEntity<List<EventFullGetDTO>> getMonthEvents(@PathVariable int month,
+                                                                @PathVariable int year){
         LocalDate date = LocalDate.of(year, month, 1);
         return eventService.getEventsInMonthFull(date);
     }
 
     @GetMapping("/year/range/{day}/{month}/{year}")
-    public ResponseEntity<List<EventFullGetDTO>> getEventsInYearRange(@PathVariable int day, @PathVariable int month, @PathVariable int year){
+    public ResponseEntity<List<EventFullGetDTO>> getEventsInYearRange(@PathVariable int day, @PathVariable int month,
+                                                                      @PathVariable int year){
           LocalDate date = LocalDate.of(year, month, day);
           return eventService.getEventsInYearRange(date);
     }

@@ -40,7 +40,7 @@ public class EventPostService {
             task.setEvent(event);
         });
         Event savedEvent = eventRepo.save(event);
-        if (eventDTO.getListId() != null && eventDTO.getListId() != 0) {
+        if (eventDTO.getListId() != null) {
             eventListService.addEventToList(eventDTO.getListId(), event);
         }
         EventBriefGetDTO returnEvent;

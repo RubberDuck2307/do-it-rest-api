@@ -36,12 +36,6 @@ public class EventService {
     private final EventDeleteService eventDeleteService;
     private final EventPostService eventPostService;
     private final EventPutService eventPutService;
-    private final EventRepo eventRepo;
-    private final ModelMapper modelMapper;
-    private final TaskRepo taskRepo;
-    private final EntityAccessHelper<Event> entityAccessHelper;
-    private final EventListService eventListService;
-
 
     public ResponseEntity<EventBriefGetDTO> saveEvent(EventCreateDTO eventDTO) {
         return eventPostService.saveEvent(eventDTO);

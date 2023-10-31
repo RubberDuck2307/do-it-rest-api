@@ -11,11 +11,10 @@ import java.util.List;
 public interface EventRepo extends JpaRepository<Event, Long> {
 
     List<Event> findAllByUser_Id(Long userId);
-    List<Event> findByUser_IdAndStartTimeBeforeAndEndTimeAfter(Long id, LocalDateTime startTime, LocalDateTime endTime);
-
     List<Event> findAllByUser_IdAndListNotNull(Long userId);
     @Query("SELECT e FROM Event e " +
             "WHERE e.user.id = :id " +
-            "AND (e.startTime BETWEEN :startTime AND :endTime OR e.endTime BETWEEN :startTime AND :endTime)")
-    List<Event> findByUserIdAndStartTimeOrEndTimeBetween(Long id, LocalDateTime startTime, LocalDateTime endTime);
+            "AND ((e.startTime BETWEEN :startTime AND :endTime OR e.endTime BETWEEN :startTime AND :endTime)" +
+            "OR (e.startTime < :startTime AND e.endTime > :endTime))")
+    List<Event> findByUserIdAndStartTimeAndEndTime(Long id, LocalDateTime startTime, LocalDateTime endTime);
 }

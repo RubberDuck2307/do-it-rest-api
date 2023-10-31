@@ -71,7 +71,7 @@ public class EventGetService {
         return new ResponseEntity<>(eventBriefGetDTOS, HttpStatus.OK);
     }
 
-    public List<Event> getWeekEvents(LocalDate date){
+    private List<Event> getWeekEvents(LocalDate date){
         LocalDateTime startWeek = LocalDateTime.of(date.with(DayOfWeek.MONDAY), LocalTime.MIN);
         LocalDateTime endWeek = LocalDateTime.of(date.with(DayOfWeek.SUNDAY), LocalTime.MAX);
         return getEventsInDates(startWeek, endWeek);
@@ -105,10 +105,8 @@ public class EventGetService {
     }
 
     private List<Event> getEventsInDates(LocalDateTime start, LocalDateTime end){
-        List<Event> eventsOfTheDate = eventRepo.findByUser_IdAndStartTimeBeforeAndEndTimeAfter(entityAccessHelper.getLoggedUserId(), start, end);
-        List<Event> fullDayEvents = eventRepo.findByUserIdAndStartTimeOrEndTimeBetween(entityAccessHelper.getLoggedUserId(), start, end);
-        eventsOfTheDate.addAll(fullDayEvents);
-        return eventsOfTheDate;
+        return eventRepo.findByUserIdAndStartTimeAndEndTime(entityAccessHelper
+                .getLoggedUserId(), start, end);
     }
 
     private List<Event> getEventsByDay(LocalDate localDate){
