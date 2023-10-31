@@ -3,6 +3,7 @@ package com.example.do_it_api.event;
 import com.example.do_it_api.event.event_list.EventList;
 import com.example.do_it_api.security.PrivateEntity;
 import com.example.do_it_api.task.Task;
+import com.example.do_it_api.user.DefaultUserDetails;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
@@ -21,10 +22,8 @@ public class Event implements PrivateEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Column(nullable = false)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startTime;
     @Column(nullable = false)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
     @Column(nullable = false)
     private String name;
@@ -33,13 +32,13 @@ public class Event implements PrivateEntity {
     @Column(nullable = false)
     private String color;
     private String location;
-    @Column(nullable = false)
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private DefaultUserDetails user;
     @ManyToOne
     @JoinColumn(name = "list")
     private EventList list;
-    @OneToMany(mappedBy = "event", orphanRemoval = true, cascade = CascadeType.REMOVE)
-    @JsonBackReference
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
     private Set<Task> relatedTasks;
 
     public void set(Event event){
@@ -56,6 +55,9 @@ public class Event implements PrivateEntity {
             return false;
         }
         return !event.getStartTime().isAfter(event.getEndTime());
+    }
+    public Long getUserId() {
+        return user.getId();
     }
 
     @Override

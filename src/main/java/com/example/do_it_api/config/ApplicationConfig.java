@@ -2,6 +2,9 @@ package com.example.do_it_api.config;
 
 import com.example.do_it_api.event.dto.EventCreateDTO;
 import com.example.do_it_api.event.Event;
+import com.example.do_it_api.task.Task;
+import com.example.do_it_api.task.TaskDTO;
+import com.example.do_it_api.task.TaskRepo;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;

@@ -9,11 +9,8 @@ import java.util.List;
 @Repository
 public interface TaskRepo extends JpaRepository<Task, Long> {
 
-    List<Task> findAllByDateAndUserId(LocalDate date, Long userId);
-    List<Task> findAllByDateBetweenAndUserId(LocalDate start, LocalDate end, Long userId);
-
-    List<Task> findAllByUserId(Long userId);
-
-
+    List<Task> findAllByDateAndUser_Id(LocalDate date, Long userId);
+    List<Task> findAllByDateBetweenAndUser_Id(LocalDate start, LocalDate end, Long userId);
+    List<Task> findAllByUser_Id(Long userId);
 
 }

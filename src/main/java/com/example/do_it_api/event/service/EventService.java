@@ -1,5 +1,7 @@
-package com.example.do_it_api.event;
+package com.example.do_it_api.event.service;
 
+import com.example.do_it_api.event.Event;
+import com.example.do_it_api.event.EventRepo;
 import com.example.do_it_api.event.dto.EventBriefGetDTO;
 import com.example.do_it_api.event.dto.EventCreateDTO;
 import com.example.do_it_api.event.dto.EventFullGetDTO;
@@ -31,71 +33,26 @@ public class EventService {
 
 
     private final EventGetService eventGetService;
+    private final EventDeleteService eventDeleteService;
+    private final EventPostService eventPostService;
+    private final EventPutService eventPutService;
     private final EventRepo eventRepo;
     private final ModelMapper modelMapper;
     private final TaskRepo taskRepo;
     private final EntityAccessHelper<Event> entityAccessHelper;
-    private final EventListRepo eventListRepo;
     private final EventListService eventListService;
-    private final EntityAccessHelper<EventList> listEntityAccessHelper;
 
-    @Transactional
+
     public ResponseEntity<EventBriefGetDTO> saveEvent(EventCreateDTO eventDTO) {
-        Event event = modelMapper.map(eventDTO, Event.class);
-        event.setUserId(entityAccessHelper.getLoggedUserId());
-        event = eventRepo.save(event);
-
-        if (eventDTO.getListId() != null && eventDTO.getListId() != 0) {
-            eventListService.addEventToList(eventDTO.getListId(), event);
-        }
-
-        createTasksFromEvent(eventDTO, event);
-        EventBriefGetDTO returnEvent;
-        returnEvent = modelMapper.map(event, EventBriefGetDTO.class);
-        return new ResponseEntity<>(returnEvent, HttpStatus.OK);
+        return eventPostService.saveEvent(eventDTO);
     }
-
 
     public ResponseEntity<Void> deleteEvent(Long id) {
-        if (!entityAccessHelper.hasUserAccessTo(eventRepo.findById(id).orElseThrow(NoSuchElementException::new))) {
-            throw new AccessDeniedException("Access denied");
-        }
-        eventRepo.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return eventDeleteService.deleteEvent(id);
     }
 
-    @Transactional
     public ResponseEntity<EventBriefGetDTO> updateEvent(Long id, EventCreateDTO eventDTO) {
-        Event event = eventRepo.findById(id).orElseThrow(NoSuchElementException::new);
-        if (!entityAccessHelper.hasUserAccessTo(event)) {
-            throw new AccessDeniedException("Access denied");
-        }
-        Event newEvent = modelMapper.map(eventDTO, Event.class);
-        if (!Event.validateEvent(newEvent)) {
-            throw new InvalidRequestBodyException();
-        }
-        event.set(newEvent);
-        if (eventDTO.getListId() != null && eventDTO.getListId() != 0) {
-            eventListService.addEventToList(eventDTO.getListId(), event);
-        }
-        if (eventDTO.getListId() == null || eventDTO.getListId() == 0) {
-            event.setList(null);
-        }
-        createTasksFromEvent(eventDTO, event);
-        EventBriefGetDTO returnEvent = modelMapper.map(event, EventBriefGetDTO.class);
-        return new ResponseEntity<>(returnEvent, HttpStatus.OK);
-    }
-
-
-    private void createTasksFromEvent(EventCreateDTO eventDTO, Event event) {
-        Set<Task> taskList = new HashSet<>();
-        eventDTO.getRelatedTasks().forEach(taskDTO -> {
-            Task task = modelMapper.map(taskDTO, Task.class);
-            task.setUserId(entityAccessHelper.getLoggedUserId());
-            task.setEvent(event);
-            if (task.getId() == null) taskList.add(task);
-        });
-        taskRepo.saveAll(taskList);
+        return eventPutService.updateEvent(id, eventDTO);
     }
 
     public ResponseEntity<List<EventBriefGetDTO>> getAllEvents() {

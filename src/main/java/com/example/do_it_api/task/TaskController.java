@@ -17,11 +17,6 @@ public class TaskController {
 
     private final TaskService taskService;
 
-    @PostMapping("/test")
-    public ResponseEntity<String> test(){
-        return ResponseEntity.ok("ok");
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<TaskDTO> getTask(@PathVariable long id) {
         return taskService.getTask(id);
@@ -44,7 +39,8 @@ public class TaskController {
     }
 
     @GetMapping("/day/{day}/{month}/{year}")
-    public ResponseEntity<List<TaskDTO>> getTaskByDay(@PathVariable int day, @PathVariable int month, @PathVariable int year){
+    public ResponseEntity<List<TaskDTO>> getTaskByDay(@PathVariable int day, @PathVariable int month,
+                                                      @PathVariable int year){
         return taskService.getTaskByDay(LocalDate.of(year, month, day));
     }
 

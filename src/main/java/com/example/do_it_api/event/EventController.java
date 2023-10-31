@@ -3,6 +3,7 @@ package com.example.do_it_api.event;
 import com.example.do_it_api.event.dto.EventBriefGetDTO;
 import com.example.do_it_api.event.dto.EventCreateDTO;
 import com.example.do_it_api.event.dto.EventFullGetDTO;
+import com.example.do_it_api.event.service.EventService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -76,8 +77,7 @@ public class EventController {
 
     @GetMapping("/year/range/{day}/{month}/{year}")
     public ResponseEntity<List<EventFullGetDTO>> getEventsInYearRange(@PathVariable int day, @PathVariable int month, @PathVariable int year){
-        LocalDate date = LocalDate.of(year, month, day);
-        return eventService.getEventsInYearRange(date);
+          LocalDate date = LocalDate.of(year, month, day);
+          return eventService.getEventsInYearRange(date);
     }
-
 }

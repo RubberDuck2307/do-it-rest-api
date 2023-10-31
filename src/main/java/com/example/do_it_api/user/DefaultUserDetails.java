@@ -1,6 +1,8 @@
 package com.example.do_it_api.user;
 
+import com.example.do_it_api.event.Event;
 import com.example.do_it_api.event.event_list.EventList;
+import com.example.do_it_api.task.Task;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -24,7 +27,10 @@ public class DefaultUserDetails implements UserDetails {
     private boolean oAuth;
     @Column (nullable = false)
     private boolean emailConfirmed = false;
-
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private Set<Event> events;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private Set<Task> tasks;
 
     public DefaultUserDetails(String userEmail, String password) {
         this.userEmail = userEmail;

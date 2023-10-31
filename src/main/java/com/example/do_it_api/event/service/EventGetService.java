@@ -88,7 +88,7 @@ public class EventGetService {
 
 
     public ResponseEntity<List<EventBriefGetDTO>> getAllEvents() {
-        List<Event> events = eventRepo.findAllByUserId(entityAccessHelper.getLoggedUserId());
+        List<Event> events = eventRepo.findAllByUser_Id(entityAccessHelper.getLoggedUserId());
         List<EventBriefGetDTO> eventBriefGetDTOS = new ArrayList<>();
         events.forEach(event -> eventBriefGetDTOS.add(modelMapper.map(event, EventBriefGetDTO.class)));
         return new ResponseEntity<>(eventBriefGetDTOS, HttpStatus.OK);
@@ -105,7 +105,7 @@ public class EventGetService {
     }
 
     private List<Event> getEventsInDates(LocalDateTime start, LocalDateTime end){
-        List<Event> eventsOfTheDate = eventRepo.findByUserIdAndStartTimeBeforeAndEndTimeAfter(entityAccessHelper.getLoggedUserId(), start, end);
+        List<Event> eventsOfTheDate = eventRepo.findByUser_IdAndStartTimeBeforeAndEndTimeAfter(entityAccessHelper.getLoggedUserId(), start, end);
         List<Event> fullDayEvents = eventRepo.findByUserIdAndStartTimeOrEndTimeBetween(entityAccessHelper.getLoggedUserId(), start, end);
         eventsOfTheDate.addAll(fullDayEvents);
         return eventsOfTheDate;

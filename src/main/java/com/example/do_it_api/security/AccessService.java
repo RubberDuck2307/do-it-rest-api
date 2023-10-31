@@ -42,7 +42,8 @@ public class AccessService {
     @Value("${app.domain}")
     private String domain;
     public ResponseEntity<AuthenticationResponse> login(LoginRequest request) {
-        Authentication a = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        Authentication a = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(),
+                request.getPassword()));
         if (a.getPrincipal() instanceof DefaultUserDetails userDetails) {
             if (!userDetails.isEmailConfirmed()) {
                 throw new EmailNotVerifiedException();

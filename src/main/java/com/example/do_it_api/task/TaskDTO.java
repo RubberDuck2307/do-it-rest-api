@@ -19,7 +19,7 @@ public class TaskDTO {
     private String name;
     private String description;
     private Long id;
-    private Long userId;
+
 
     @JsonProperty(value = "isImportant")
     private boolean isImportant;
@@ -37,7 +37,6 @@ public class TaskDTO {
                 "name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", id=" + id +
-                ", userId=" + userId +
                 ", isImportant=" + isImportant +
                 ", isFinished=" + isFinished +
                 ", date=" + date +

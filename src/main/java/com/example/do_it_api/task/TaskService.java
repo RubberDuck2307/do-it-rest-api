@@ -34,19 +34,19 @@ public class TaskService {
     }
 
     public ResponseEntity<List<TaskDTO>> getTaskByDay(LocalDate localDate) {
-        List<Task> tasks = taskRepo.findAllByDateAndUserId(localDate, entityAccessHelper.getLoggedUserId());
+        List<Task> tasks = taskRepo.findAllByDateAndUser_Id(localDate, entityAccessHelper.getLoggedUserId());
         List<TaskDTO> taskDTOS = tasks.stream().map(task -> modelMapper.map(task, TaskDTO.class)).toList();
         return new ResponseEntity<>(taskDTOS, HttpStatus.OK);
     }
 
     public ResponseEntity<List<TaskDTO>> getTaskInWeek(LocalDate localDate) {
-        List<Task> tasks = taskRepo.findAllByDateBetweenAndUserId(localDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)), localDate.plusDays(6), entityAccessHelper.getLoggedUserId());
+        List<Task> tasks = taskRepo.findAllByDateBetweenAndUser_Id(localDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)), localDate.plusDays(6), entityAccessHelper.getLoggedUserId());
         List<TaskDTO> taskDTOS = tasks.stream().map(task -> modelMapper.map(task, TaskDTO.class)).toList();
         return new ResponseEntity<>(taskDTOS, HttpStatus.OK);
     }
 
     public ResponseEntity<List<TaskDTO>> getTasksInMonth(LocalDate localDate) {
-        List<Task> tasks = taskRepo.findAllByDateBetweenAndUserId(localDate.with(TemporalAdjusters.firstDayOfMonth()), localDate.with(TemporalAdjusters.lastDayOfMonth()), entityAccessHelper.getLoggedUserId());
+        List<Task> tasks = taskRepo.findAllByDateBetweenAndUser_Id(localDate.with(TemporalAdjusters.firstDayOfMonth()), localDate.with(TemporalAdjusters.lastDayOfMonth()), entityAccessHelper.getLoggedUserId());
         List<TaskDTO> taskDTOS = tasks.stream().map(task -> modelMapper.map(task, TaskDTO.class)).toList();
         return new ResponseEntity<>(taskDTOS, HttpStatus.OK);
     }
@@ -56,7 +56,7 @@ public class TaskService {
         if (!validateTaskRequest(taskDTO))
            throw new InvalidRequestBodyException();
         Task task = modelMapper.map(taskDTO, Task.class);
-        task.setUserId(entityAccessHelper.getLoggedUserId());
+        task.setUser(entityAccessHelper.getLoggedUser());
         task = taskRepo.save(task);
         taskDTO = modelMapper.map(task, TaskDTO.class);
         return new ResponseEntity<>(taskDTO, HttpStatus.OK);
@@ -64,7 +64,7 @@ public class TaskService {
 
     public ResponseEntity<List<TaskDTO>> getAllTasks() {
 
-        List<Task> tasks = taskRepo.findAllByUserId(entityAccessHelper.getLoggedUserId());
+        List<Task> tasks = taskRepo.findAllByUser_Id(entityAccessHelper.getLoggedUserId());
         List<TaskDTO> taskDTOS = new ArrayList<>();
         tasks.forEach(task -> taskDTOS.add(modelMapper.map(task, TaskDTO.class)));
         return new ResponseEntity<>(taskDTOS, HttpStatus.OK);
@@ -72,7 +72,6 @@ public class TaskService {
 
     @Transactional
     public ResponseEntity<TaskDTO> modifyTask(TaskDTO taskDTO) {
-        ;
 
         if (!validateTaskRequest(taskDTO))
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -81,18 +80,8 @@ public class TaskService {
         if (!entityAccessHelper.hasUserAccessTo(task)) {
             throw new AccessDeniedException("Access denied");
         }
-        String name = taskDTO.getName();
-        name = name.replaceAll("\\s+", "");
-        if (!name.equals("")) {
-            task.setName(name);
-        }
-        if (taskDTO.getDescription() != null) {
-            String description = taskDTO.getDescription();
-            description = description.replaceAll("\\s+", "");
-            if (!description.equals("")) {
-                task.setDescription(description);
-            }
-        }
+        task.setName(taskDTO.getName());
+        task.setDescription(taskDTO.getDescription());
         task.setDate(taskDTO.getDate());
         task.setImportant(taskDTO.isImportant());
         task.setFinished(taskDTO.isFinished());

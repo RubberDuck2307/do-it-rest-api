@@ -25,7 +25,7 @@ public class EventListService {
 
     public ResponseEntity<List<EventListShortGetDTO>> getAllEventsList() {
         List<EventList> eventLists = eventListRepo.findAllByUser(entityAccessHelper.getLoggedUser());
-        List<Event> events = eventRepo.findAllByUserIdAndListNotNull(entityAccessHelper.getLoggedUserId());
+        List<Event> events = eventRepo.findAllByUser_IdAndListNotNull(entityAccessHelper.getLoggedUserId());
         List<EventListShortGetDTO> dtos = new ArrayList<>();
         Map<Long, Integer> amountOfEventsInList = getAmountOfEventsInList(events);
         eventLists.forEach(eventList -> {

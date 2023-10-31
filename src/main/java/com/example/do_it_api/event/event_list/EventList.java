@@ -24,7 +24,7 @@ public class EventList implements PrivateEntity {
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
     private DefaultUserDetails user;
-    @OneToMany(mappedBy = "list", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "list", cascade = CascadeType.ALL)
     private Set<Event> events;
 
     public void addEvent(Event event){
