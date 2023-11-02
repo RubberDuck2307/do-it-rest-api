@@ -24,98 +24,47 @@ public class EventGetService {
     private final ModelMapper modelMapper;
     private final EntityAccessHelper<Event> entityAccessHelper;
 
-    public ResponseEntity<List<EventFullGetDTO>> getEventsByDayFull(LocalDate localDate){
-        List<Event> events = getEventsByDay(localDate);
-        List<EventFullGetDTO> eventFullGetDTOS = events.stream().map(event -> modelMapper.map(event, EventFullGetDTO.class)).toList();
-        return new ResponseEntity<>(eventFullGetDTOS, HttpStatus.OK);
-    }
-
-    public ResponseEntity<List<EventBriefGetDTO>> getEventsByDayBrief(LocalDate localDate){
-        List<Event> events = getEventsByDay(localDate);
-        List<EventBriefGetDTO> eventBriefGetDTOS = events.stream().map(event -> modelMapper.map(event, EventBriefGetDTO.class)).toList();
-        return new ResponseEntity<>(eventBriefGetDTOS, HttpStatus.OK);
-    }
-
-    public ResponseEntity<List<EventBriefGetDTO>> getEventsInMonthBrief(LocalDate localDate){
-        List<Event> events = getEventsInMonth(localDate);
-        List<EventBriefGetDTO> eventBriefGetDTOS = events.stream().map(event -> modelMapper.map(event, EventBriefGetDTO.class)).toList();
-        return new ResponseEntity<>(eventBriefGetDTOS, HttpStatus.OK);
-    }
-
-
-
-    public ResponseEntity<List<EventFullGetDTO>> getEventsInMonthFull(LocalDate localDate){
-        List<Event>  events = getEventsInMonth(localDate);
-        List<EventFullGetDTO> dtos = events.stream().map(event -> modelMapper.map(event, EventFullGetDTO.class)).toList();
-        return new ResponseEntity<>(dtos, HttpStatus.OK);
-    }
-
-    public ResponseEntity<List<EventFullGetDTO>> getEventsInYearRange(LocalDate date){
-
+    public <T> ResponseEntity<List<T>> getEventsInYearRange(LocalDate date, Class<T> T){
         LocalDate start = date.minusMonths(6);
         LocalDate end = date.plusMonths(6);
         List<Event> events = getEventsInDates(start.atStartOfDay(), end.atTime(LocalTime.MAX));
-        List<EventFullGetDTO> dtos = events.stream().map(event -> modelMapper.map(event, EventFullGetDTO.class)).toList();
-        return new ResponseEntity<>(dtos, HttpStatus.OK);
+        List<T> dtos = map(T, events);
+        return new ResponseEntity<>(dtos, HttpStatus.FOUND);
     }
 
-
-    public ResponseEntity<List<EventFullGetDTO>> getWeekEventsFull(LocalDate localDate){
-        List<Event> events = getWeekEvents(localDate);
-        List<EventFullGetDTO> eventFullGetDTOS = events.stream().map(event -> modelMapper.map(event, EventFullGetDTO.class)).toList();
-        return new ResponseEntity<>(eventFullGetDTOS, HttpStatus.OK);
-    }
-    public ResponseEntity<List<EventBriefGetDTO>> getWeekEventsBrief (LocalDate localDate){
-        List<Event> events = getWeekEvents(localDate);
-        List<EventBriefGetDTO> eventBriefGetDTOS = events.stream().map(event -> modelMapper.map(event, EventBriefGetDTO.class)).toList();
-        return new ResponseEntity<>(eventBriefGetDTOS, HttpStatus.OK);
-    }
-
-    private List<Event> getWeekEvents(LocalDate date){
+    public <T> ResponseEntity<List<T>>getEventsByWeek(LocalDate date, Class<T> T){
         LocalDateTime startWeek = LocalDateTime.of(date.with(DayOfWeek.MONDAY), LocalTime.MIN);
         LocalDateTime endWeek = LocalDateTime.of(date.with(DayOfWeek.SUNDAY), LocalTime.MAX);
-        return getEventsInDates(startWeek, endWeek);
+        List<Event> events = getEventsInDates(startWeek, endWeek);
+        List<T> dtos = map(T, events);
+        return new ResponseEntity<>(dtos, HttpStatus.FOUND);
     }
 
 
-    public ResponseEntity<List<EventBriefGetDTO>> getTodayEvents() {
-        return getEventsByDayBrief(LocalDate.now());
-    }
-
-    public ResponseEntity<List<EventBriefGetDTO>> getThisWeekEvents(){
-        return getWeekEventsBrief(LocalDate.now());
-    }
-
-
-    public ResponseEntity<List<EventBriefGetDTO>> getAllEvents() {
+    public <T> ResponseEntity<List<T>> getAllEvents(Class<T> T) {
         List<Event> events = eventRepo.findAllByUser_Id(entityAccessHelper.getLoggedUserId());
-        List<EventBriefGetDTO> eventBriefGetDTOS = new ArrayList<>();
-        events.forEach(event -> eventBriefGetDTOS.add(modelMapper.map(event, EventBriefGetDTO.class)));
-        return new ResponseEntity<>(eventBriefGetDTOS, HttpStatus.OK);
+        List<T> dtos = map(T, events);
+        return new ResponseEntity<>(dtos, HttpStatus.FOUND);
     }
 
-    public ResponseEntity<EventFullGetDTO> getEvent(Long id) {
+    public <T> ResponseEntity<T> getEvent(Long id, Class<T> T) {
         Event event = eventRepo.findById(id).orElseThrow(() -> new NoSuchElementException("No such event"));
         if (!entityAccessHelper.hasUserAccessTo(event)) {
             throw new AccessDeniedException("Access denied");
         }
-        EventFullGetDTO returnEvent;
-        returnEvent = modelMapper.map(event, EventFullGetDTO.class);
-        return new ResponseEntity<>(returnEvent, HttpStatus.OK);
+        T returnEvent = modelMapper.map(event, T);
+        return new ResponseEntity<>(returnEvent, HttpStatus.FOUND);
     }
 
-    private List<Event> getEventsInDates(LocalDateTime start, LocalDateTime end){
-        return eventRepo.findByUserIdAndStartTimeAndEndTime(entityAccessHelper
-                .getLoggedUserId(), start, end);
-    }
-
-    private List<Event> getEventsByDay(LocalDate localDate){
+    public <T> ResponseEntity<List<T>> getEventsByDay(LocalDate localDate, Class<T> T){
         LocalDateTime startDay = LocalDateTime.of(localDate, LocalTime.MIN);
         LocalDateTime endDay = LocalDateTime.of(localDate, LocalTime.MAX);
-        return getEventsInDates(startDay, endDay);
+        List<Event> events = getEventsInDates(startDay, endDay);
+        List<T> dtos = map(T, events);
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
-    private List<Event> getEventsInMonth(LocalDate localDate){
+    public <T> ResponseEntity<List<T>> getEventsByMonth(LocalDate localDate, Class<T> T){
         LocalDateTime startMonth = LocalDateTime.of(localDate.withDayOfMonth(1), LocalTime.MIN);
         LocalDateTime endMonth = LocalDateTime.of(localDate.withDayOfMonth(localDate.lengthOfMonth()), LocalTime.MAX);
         LocalDateTime fistMonday = startMonth.with(DayOfWeek.MONDAY);
@@ -123,6 +72,18 @@ public class EventGetService {
         Period period = Period.between(fistMonday.toLocalDate(), lastSunday.toLocalDate());
         if (period.getDays() <= 41)
             lastSunday = lastSunday.plusWeeks(1);
-        return getEventsInDates(fistMonday, lastSunday);
+        List<Event> events = getEventsInDates(fistMonday, lastSunday);
+        List<T> dtos = map(T, events);
+        return new ResponseEntity<>(dtos, HttpStatus.FOUND);
     }
+
+    private <T> List<T> map(Class<T> T, List<Event> events) {
+        return events.stream().map(event -> modelMapper.map(event, T)).toList();
+    }
+
+    private List<Event> getEventsInDates(LocalDateTime start, LocalDateTime end){
+        return eventRepo.findByUserIdAndStartTimeAndEndTime(entityAccessHelper
+                .getLoggedUserId(), start, end);
+    }
+
 }

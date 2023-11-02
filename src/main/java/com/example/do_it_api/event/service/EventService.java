@@ -1,31 +1,14 @@
 package com.example.do_it_api.event.service;
 
-import com.example.do_it_api.event.Event;
-import com.example.do_it_api.event.EventRepo;
 import com.example.do_it_api.event.dto.EventBriefGetDTO;
 import com.example.do_it_api.event.dto.EventCreateDTO;
 import com.example.do_it_api.event.dto.EventFullGetDTO;
-import com.example.do_it_api.event.event_list.EventList;
-import com.example.do_it_api.event.event_list.EventListRepo;
-import com.example.do_it_api.event.event_list.EventListService;
-import com.example.do_it_api.event.service.EventGetService;
-import com.example.do_it_api.exception.custom_exception.InvalidRequestBodyException;
-import com.example.do_it_api.security.EntityAccessHelper;
-import com.example.do_it_api.task.Task;
-import com.example.do_it_api.task.TaskRepo;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -49,36 +32,29 @@ public class EventService {
         return eventPutService.updateEvent(id, eventDTO);
     }
 
-    public ResponseEntity<List<EventBriefGetDTO>> getAllEvents() {
-        return eventGetService.getAllEvents();
+    public <T> ResponseEntity<List<T>> getAllEvents(Class<T> T) {
+        return eventGetService.getAllEvents(T);
     }
 
-    public ResponseEntity<EventFullGetDTO> getEvent (Long id) {
-        return eventGetService.getEvent(id);
+    public <T> ResponseEntity<T> getEvent (Long id, Class<T> T) {
+        return eventGetService.getEvent(id, T);
     }
 
-    public ResponseEntity<List<EventBriefGetDTO>> getTodayEvents() {
-        return eventGetService.getTodayEvents();
+
+    public <T> ResponseEntity<List<T>> getEventsByWeek(LocalDate date, Class<T> T) {
+        return eventGetService.getEventsByWeek(date, T);
     }
 
-    public ResponseEntity<List<EventBriefGetDTO>> getThisWeekEvents() {
-        return eventGetService.getThisWeekEvents();
+    public <T> ResponseEntity<List<T>> getEventsByDay(LocalDate date, Class<T> T) {
+        return eventGetService.getEventsByDay(date, T);
     }
 
-    public ResponseEntity<List<EventFullGetDTO>> getWeekEventsFull(LocalDate date) {
-        return eventGetService.getWeekEventsFull(date);
+    public <T> ResponseEntity<List<T>> getEventsByMonth(LocalDate date, Class<T> T) {
+        return eventGetService.getEventsByMonth(date, T);
     }
 
-    public ResponseEntity<List<EventFullGetDTO>> getEventsByDayFull(LocalDate date) {
-        return eventGetService.getEventsByDayFull(date);
-    }
-
-    public ResponseEntity<List<EventFullGetDTO>> getEventsInMonthFull(LocalDate date) {
-        return eventGetService.getEventsInMonthFull(date);
-    }
-
-    public ResponseEntity<List<EventFullGetDTO>> getEventsInYearRange(LocalDate date) {
-        return eventGetService.getEventsInYearRange(date);
+    public <T> ResponseEntity<List<T>> getEventsInYearRange(LocalDate date, Class<T> T) {
+        return eventGetService.getEventsInYearRange(date, T);
     }
 
 }
