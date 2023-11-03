@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
 @ControllerAdvice
-
 public class RestResponseEntityHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = EmailNotVerifiedException.class)
@@ -35,6 +34,7 @@ public class RestResponseEntityHandler extends ResponseEntityExceptionHandler {
                 .type("EmailAlreadyTaken")
                 .timestamp(LocalDateTime.now())
                 .message("The email is already used for different account")
+                .debugMessage("Register using a different email or login with the already existing account")
                 .build();
         return buildResponseEntity(apiError);
     }

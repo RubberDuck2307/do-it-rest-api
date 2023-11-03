@@ -60,21 +60,21 @@ public class EventController {
     }
 
     @GetMapping("/week/{day}/{month}/{year}")
-    public ResponseEntity<List<EventFullGetDTO>> getWeekEvents(@PathVariable int day, @PathVariable int month,
+    public ResponseEntity<List<EventFullGetDTO>> getEventsByWeek(@PathVariable int day, @PathVariable int month,
                                                                @PathVariable int year) {
         LocalDate date = LocalDate.of(year, month, day);
         return eventService.getEventsByWeek(date, EventFullGetDTO.class);
     }
 
     @GetMapping("/{day}/{month}/{year}")
-    public ResponseEntity<List<EventFullGetDTO>> getDayEvents(@PathVariable int day, @PathVariable int month,
+    public ResponseEntity<List<EventFullGetDTO>> getEventsByDay(@PathVariable int day, @PathVariable int month,
                                                               @PathVariable int year) {
         LocalDate date = LocalDate.of(year, month, day);
         return eventService.getEventsByDay(date, EventFullGetDTO.class);
     }
 
     @GetMapping("/month/{month}/{year}")
-    public ResponseEntity<List<EventFullGetDTO>> getMonthEvents(@PathVariable int month,
+    public ResponseEntity<List<EventFullGetDTO>> getEventsByMonth(@PathVariable int month,
                                                                 @PathVariable int year) {
         LocalDate date = LocalDate.of(year, month, 1);
         return eventService.getEventsByMonth(date, EventFullGetDTO.class);

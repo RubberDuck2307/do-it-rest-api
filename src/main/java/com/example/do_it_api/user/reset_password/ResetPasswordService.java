@@ -46,13 +46,15 @@ public class ResetPasswordService {
     }
 
     public boolean sendResetPasswordEmail(ResetPasswordToken token) {
-        EmailDetails emailDetails = new EmailDetails(token.getUser().getUsername(), applicationURL + resetPasswordPage + token.getToken(), "Reset your password", null);
+        EmailDetails emailDetails = new EmailDetails(token.getUser().getUsername(),
+                applicationURL + resetPasswordPage + token.getToken(), "Reset your password", null);
         return emailService.sendSimpleMail(emailDetails);
     }
 
     @Transactional
     public void resetPassword(ResetPasswordRequest resetPasswordRequest) {
-        ResetPasswordToken token = resetPasswordRepo.findByToken(resetPasswordRequest.getToken()).orElseThrow(InvalidResetPasswordTokenException::new);
+        ResetPasswordToken token = resetPasswordRepo.findByToken(resetPasswordRequest.getToken())
+                .orElseThrow(InvalidResetPasswordTokenException::new);
         if (token.getExpirationDate().isBefore(java.time.LocalDateTime.now())) {
             throw new ExpiredResetPasswordTokenException();
         }
@@ -62,7 +64,11 @@ public class ResetPasswordService {
 
     public void sendSetPasswordEmail(DefaultUserDetails userDetails) {
         ResetPasswordToken token = createToken(userDetails);
-        EmailDetails emailDetails = new EmailDetails(userDetails.getUsername(), "Your account does not have a password, because it has been accessed so far by your google account, you can set your password using the link below \n " + applicationURL + setPasswordPage + token.getToken(), "Set your password", null);
+        EmailDetails emailDetails = new EmailDetails(userDetails.getUsername(),
+                "Your account does not have a password," +
+                        " because it has been accessed so far by your google account, you can set your password using" +
+                        " the link below \n " + applicationURL + setPasswordPage + token.getToken(),
+                "Set your password", null);
         emailService.sendSimpleMail(emailDetails);
     }
 }

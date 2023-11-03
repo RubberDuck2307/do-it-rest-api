@@ -41,6 +41,7 @@ public class AccessService {
     private final GoogleOAuthService googleOAuthService;
     @Value("${app.domain}")
     private String domain;
+
     public ResponseEntity<AuthenticationResponse> login(LoginRequest request) {
         Authentication a = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(),
                 request.getPassword()));

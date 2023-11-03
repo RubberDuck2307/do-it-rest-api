@@ -33,11 +33,9 @@ public class GoogleOAuthService {
         try {
             GoogleTokenResponse token = restTemplate.postForObject(GOOGLE_AUTH_URL, body, GoogleTokenResponse.class);
             return token.getAccess_token();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new UnknownException("Error exchanging code for access token");
         }
-
     }
 
     public String getGoogleUserInfo(String accessToken) {
@@ -45,14 +43,10 @@ public class GoogleOAuthService {
         headers.set("Authorization", "Bearer " + accessToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
         try {
-
             ResponseEntity<UserInfoResponse> userInfo = restTemplate.exchange(
                     "https://www.googleapis.com/oauth2/v2/userinfo", HttpMethod.GET, entity, UserInfoResponse.class);
             return userInfo.getBody().getEmail();
-
-        }
-        catch (Exception e){
-
+        } catch (Exception e) {
             throw new UnknownException("Error getting user info");
         }
     }
