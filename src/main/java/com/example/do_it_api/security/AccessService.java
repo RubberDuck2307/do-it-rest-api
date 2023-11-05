@@ -35,7 +35,6 @@ public class AccessService {
     private final JwtService jwtService;
     private final UserDetailsRepo userRepo;
     private final PasswordEncoder passwordEncoder;
-    private final EntityAccessHelper<?> entityAccessHelper;
     private final EmailTokenService emailTokenService;
     private final ResetPasswordService resetPasswordService;
     private final GoogleOAuthService googleOAuthService;
@@ -54,10 +53,11 @@ public class AccessService {
     }
 
     public ResponseEntity<String> register(RegisterRequest request) {
-        DefaultUserDetails user = new DefaultUserDetails(request.getEmail(), passwordEncoder.encode(request.getPassword()));
         if (userRepo.existsByUserEmail(request.getEmail())) {
             throw new EmailAlreadyTakenException();
         }
+        DefaultUserDetails user = new DefaultUserDetails(request.getEmail(), passwordEncoder
+                .encode(request.getPassword()));
         userRepo.save(user);
         EmailToken token = emailTokenService.createToken(user);
         emailTokenService.sendConfirmationEmail(token);
@@ -91,15 +91,6 @@ public class AccessService {
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, springCookie.toString());
     }
-
-    public ResponseEntity<?> checkAuth() {
-        DefaultUserDetails defaultUserDetails = entityAccessHelper.getLoggedUser();
-        if (Objects.isNull(defaultUserDetails)) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     public ResponseEntity<AuthenticationResponse> confirmEmail(String token) {
         DefaultUserDetails userDetails = emailTokenService.confirmEmail(token);
         return setAccessCookieResponse(userDetails.getUsername());
@@ -130,7 +121,7 @@ public class AccessService {
         return ResponseEntity.ok("Password changed");
     }
 
-    public ResponseEntity<AuthenticationResponse> googleLogin(GoogleLoginRequest request) {
+    public ResponseEntity<AuthenticationResponse> oAuthGoogleLogin(GoogleLoginRequest request) {
         String token = googleOAuthService.exchangeCodeForAccessToken(request.getCode());
         String email = googleOAuthService.getGoogleUserInfo(token);
         if (userRepo.existsByUserEmail(email)) {

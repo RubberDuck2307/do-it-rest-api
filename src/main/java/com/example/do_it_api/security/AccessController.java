@@ -21,13 +21,6 @@ import org.springframework.web.bind.annotation.*;
 public class AccessController {
 
     private final AccessService accessService;
-    @Value("${app.url}")
-    private String appURL;
-    @Value("${app.domain}")
-    private String appDomain;
-    @Value("${google.redirect-uri}")
-    private String redirectUri;
-
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody LoginRequest request) {
@@ -42,11 +35,6 @@ public class AccessController {
     @GetMapping("/logout")
     public void logout(HttpServletResponse response) {
         accessService.logOut(response);
-    }
-
-    @GetMapping("/")
-    ResponseEntity<?> checkAuth() {
-        return accessService.checkAuth();
     }
 
     @GetMapping("/email/confirmation")
@@ -71,17 +59,12 @@ public class AccessController {
 
     @PostMapping("/oauth/google")
     public ResponseEntity<?> googleLogin(@Valid @RequestBody GoogleLoginRequest request) {
-        return accessService.googleLogin(request);
+        return accessService.oAuthGoogleLogin(request);
     }
 
     @PostMapping("/password/reset/request")
     public ResponseEntity<?> resetPasswordRequest(@Valid @RequestBody EmailRequest email) {
         return accessService.sendResetPasswordEmail(email.getEmail());
     }
-
-    @GetMapping("/cors")
-        public ResponseEntity<String> cors(){
-            return new ResponseEntity<>(appURL + " " + appDomain + " " + redirectUri, HttpStatus.OK);
-        }
 
 }

@@ -10,9 +10,9 @@
     </parent>
     <groupId>com.example</groupId>
     <artifactId>ToDoAPI</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>ToDoAPI</name>
-    <description>ToDoApi</description>
+    <version>1.0.0</version>
+    <name>DoItApi</name>
+    <description>DoItApi</description>
     <properties>
         <java.version>17</java.version>
     </properties>
