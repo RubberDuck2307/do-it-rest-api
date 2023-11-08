@@ -29,7 +29,7 @@ public class EventGetService {
         LocalDate end = date.plusMonths(6);
         List<Event> events = getEventsInDates(start.atStartOfDay(), end.atTime(LocalTime.MAX));
         List<T> dtos = map(T, events);
-        return new ResponseEntity<>(dtos, HttpStatus.FOUND);
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
     public <T> ResponseEntity<List<T>>getEventsByWeek(LocalDate date, Class<T> T){
@@ -37,14 +37,14 @@ public class EventGetService {
         LocalDateTime endWeek = LocalDateTime.of(date.with(DayOfWeek.SUNDAY), LocalTime.MAX);
         List<Event> events = getEventsInDates(startWeek, endWeek);
         List<T> dtos = map(T, events);
-        return new ResponseEntity<>(dtos, HttpStatus.FOUND);
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
 
     public <T> ResponseEntity<List<T>> getAllEvents(Class<T> T) {
         List<Event> events = eventRepo.findAllByUser_Id(entityAccessHelper.getLoggedUserId());
         List<T> dtos = map(T, events);
-        return new ResponseEntity<>(dtos, HttpStatus.FOUND);
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
     public <T> ResponseEntity<T> getEvent(Long id, Class<T> T) {
@@ -53,7 +53,7 @@ public class EventGetService {
             throw new AccessDeniedException("Access denied");
         }
         T returnEvent = modelMapper.map(event, T);
-        return new ResponseEntity<>(returnEvent, HttpStatus.FOUND);
+        return new ResponseEntity<>(returnEvent, HttpStatus.OK);
     }
 
     public <T> ResponseEntity<List<T>> getEventsByDay(LocalDate localDate, Class<T> T){
@@ -74,7 +74,7 @@ public class EventGetService {
             lastSunday = lastSunday.plusWeeks(1);
         List<Event> events = getEventsInDates(fistMonday, lastSunday);
         List<T> dtos = map(T, events);
-        return new ResponseEntity<>(dtos, HttpStatus.FOUND);
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
     private <T> List<T> map(Class<T> T, List<Event> events) {
